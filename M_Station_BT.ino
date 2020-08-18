@@ -14,7 +14,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP280.h>
 #define BMP280_ADDRESS (0x76) // явное задание адреса датчика для I2C
-#define BMP_SCK 13    //
+#define BMP_SCK 13
 #define BMP_MISO 12
 #define BMP_MOSI 11
 #define BMP_CS 10
