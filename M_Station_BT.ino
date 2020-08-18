@@ -52,15 +52,16 @@ float te; // температура воздуха
 float pr; // атм. давление
 float hu; // влажность воздуха
 
+// минимальные и максимальные значения
 float teMin;
 float prMin;
 float huMin;
-
 float prMax;
 float huMax;
 float teMax;
 
-int lcdRezhim = 1;
+int lcdRezhim = 1; // режим отображения
+
 // время с момента старта программы
 int minut =0;
 int sekund =0;
@@ -119,6 +120,7 @@ void setup() {
     while (1);
   }
 
+  // Задание начальных минимальных и максимальных значений
   Izmerenie();
   teMin = te;
   teMax = te;
@@ -193,7 +195,7 @@ void OtobrLCD (float t, float p, float h) {
     lcd.setCursor(0,0);
     lcd.print("P:");lcd.print(prMin,0); lcd.print("mm");
     lcd.setCursor(8,1);
-    lcd.println("Minimum");
+    lcd.println("Minimum ");
   }
   else if (lcdRezhim == 3){
     lcd.clear();
@@ -206,7 +208,7 @@ void OtobrLCD (float t, float p, float h) {
     lcd.setCursor(0,0);
     lcd.print("P:");lcd.print(prMax,0); lcd.print("mm");
     lcd.setCursor(8,1);
-    lcd.println("Maximum");
+    lcd.println("Maximum ");
   }
 }
 // ***************************************************
