@@ -118,6 +118,14 @@ void setup() {
     lcd.print("Error DHT11");
     while (1);
   }
+
+  Izmerenie();
+  teMin = te;
+  teMax = te;
+  prMin = pr;
+  prMax = pr;
+  huMin = hu;
+  huMax = hu;
 }
 
 //############################################################################
