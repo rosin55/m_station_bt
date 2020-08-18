@@ -16,7 +16,7 @@
 #define BMP280_ADDRESS (0x76) // явное задание адреса датчика для I2C
 #define BMP_SCK 13    //
 #define BMP_MISO 12
-#define BMP_MOSI 11 
+#define BMP_MOSI 11
 #define BMP_CS 10
 
 #include "DHT.h"
@@ -26,6 +26,8 @@
 #include <LiquidCrystal.h>
 
 #include <SoftwareSerial.h>
+
+#define VERSION "20.08.18"
 
 // инициализация с указанием контактов подключения
 LiquidCrystal lcd(9, 8, 7, 6, 5, 4);
@@ -65,7 +67,7 @@ DHT dht(DHTPIN, DHTTYPE);
 //############################################################################
 void setup() {
   Serial.begin(9600);
-  // устанавливаем скорость передачи данных для последовательного порта, созданного 
+  // устанавливаем скорость передачи данных для последовательного порта, созданного
   // библиотекой SoftwareSerial
    mySerial.begin(9600);
    mySerial.println("Hi! This is M_Station_BT!");
@@ -82,27 +84,28 @@ void setup() {
   lcd.createChar(0, Gradus);
   delay(100);
   lcd.clear();     // очистка дисплея
-  lcd.print("Start v20.08.18");
+  lcd.print("Start v");
+  lcd.print(VERSION);
   delay(2000);
   IzmerBatarei(); // измерить и показать напряжение батареи питания
 
   lcd.clear();     // очистка дисплея
   lcd.setCursor(2,0);
   // опрос датчика давления и температуры
-  if (!bmp.begin(BMP280_ADDRESS)) {  
+  if (!bmp.begin(BMP280_ADDRESS)) {
     Serial.println("Ошибка получения данных с датчика BMP280");
     lcd.print("Error BMP280");
-    while (1); 
+    while (1);
   }
   // опрос датчика влажности
   float h = dht.readHumidity();
   if (isnan(h)) {// ошибка получения данных
     Serial.println("Ошибка получения данных с датчика DHT11");
     lcd.print("Error DHT11");
-    while (1); 
+    while (1);
   }
 }
- 
+
 //############################################################################
 void loop() {
   if (millis() - timer > 2000) {
@@ -200,7 +203,7 @@ void ZaprDann(){
         mySerial.print("t= "); mySerial.print(te); mySerial.println(" *C");
       break;
       case 'P':
-        mySerial.print("p= "); mySerial.print(pr); mySerial.println(" mm Hg");    
+        mySerial.print("p= "); mySerial.print(pr); mySerial.println(" mm Hg");
       break;
       case 'H':
         mySerial.print("h= "); mySerial.print(hu); mySerial.println(" %");
@@ -212,10 +215,10 @@ void ZaprDann(){
       break;
       case 'V':
         mySerial.println(stroka);
-      break;     
+      break;
       default:
         mySerial.print(data);mySerial.println(" is not a command!");
-      break;     
+      break;
     }
   }
 }
