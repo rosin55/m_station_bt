@@ -51,6 +51,16 @@ char data; // данные принятые с BT
 float te; // температура воздуха
 float pr; // атм. давление
 float hu; // влажность воздуха
+
+float teMin;
+float prMin;
+float huMin;
+
+float prMax;
+float huMax;
+float teMax;
+
+int lcdRezhim = 1;
 // время с момента старта программы
 int minut =0;
 int sekund =0;
@@ -114,7 +124,8 @@ void setup() {
 void loop() {
   if (millis() - timer > 2000) {
     timer = millis();
-    Izmerenie ();
+    Izmerenie();
+    CheckMaxMin(te, pr, hu);
 //    OtobrMonitor (te, pr, hu);
     VremyaToStroka();
     OtobrLCD (te, pr, hu);
@@ -148,21 +159,49 @@ void OtobrMonitor (float t, float p, float h) {
 }
 // ***************************************************
 void OtobrLCD (float t, float p, float h) {
-  lcd.clear();
-  lcd.setCursor(0,1);
-  lcd.print("H:");lcd.print(h,0); lcd.print("%");
-  lcd.setCursor(8,0);
-  lcd.print("T:"); lcd.print(t,1);
-  lcd.write(byte(0)); // печать знака градуса Цельсия
-  lcd.print("C");
-  lcd.setCursor(0,0);
-  lcd.print("P:");lcd.print(p,0); lcd.print("mm");
-  // print the number of seconds since reset:
-  lcd.setCursor(8,1);
-  lcd.println (stroka);  // отображение времени с момента запуска прибора
-//  lcd.print(millis() / 1000);
-
+  if (lcdRezhim == 1){
+    lcd.clear();
+    lcd.setCursor(0,1);
+    lcd.print("H:");lcd.print(h,0); lcd.print("%");
+    lcd.setCursor(8,0);
+    lcd.print("T:"); lcd.print(t,1);
+    lcd.write(byte(0)); // печать знака градуса Цельсия
+    lcd.print("C");
+    lcd.setCursor(0,0);
+    lcd.print("P:");lcd.print(p,0); lcd.print("mm");
+    // print the number of seconds since reset:
+    lcd.setCursor(8,1);
+    lcd.println (stroka);  // отображение времени с момента запуска прибора
+    // lcd.print(millis() / 1000);
+  }
+  else if (lcdRezhim == 2){
+    lcd.clear();
+    lcd.setCursor(0,1);
+    lcd.print("H:");lcd.print(huMin,0); lcd.print("%");
+    lcd.setCursor(8,0);
+    lcd.print("T:"); lcd.print(teMin,1);
+    lcd.write(byte(0)); // печать знака градуса Цельсия
+    lcd.print("C");
+    lcd.setCursor(0,0);
+    lcd.print("P:");lcd.print(prMin,0); lcd.print("mm");
+    lcd.setCursor(8,1);
+    lcd.println("Minimum");
+  }
+  else if (lcdRezhim == 3){
+    lcd.clear();
+    lcd.setCursor(0,1);
+    lcd.print("H:");lcd.print(huMax,0); lcd.print("%");
+    lcd.setCursor(8,0);
+    lcd.print("T:"); lcd.print(teMax,1);
+    lcd.write(byte(0)); // печать знака градуса Цельсия
+    lcd.print("C");
+    lcd.setCursor(0,0);
+    lcd.print("P:");lcd.print(prMax,0); lcd.print("mm");
+    lcd.setCursor(8,1);
+    lcd.println("Maximum");
+  }
 }
+// ***************************************************
 void VremyaToStroka(){   // перевод времени в строку символов
   int time = millis()/1000;
   sekund = time%60;
@@ -175,7 +214,7 @@ void VremyaToStroka(){   // перевод времени в строку сим
   if (sekund < 10) {stroka +='0';}
   stroka = stroka + sekund;
 }
-
+// ***************************************************
 void IzmerBatarei(){
   sensorValue = analogRead(analogInPin);
   outputValue = sensorValue * k ;
@@ -184,7 +223,7 @@ void IzmerBatarei(){
   lcd.print("U bat = "); lcd.print(outputValue);
   delay(3000);
 }
-
+// ***************************************************
 void ZaprDann(){
   if(mySerial.available() )  {
     data = mySerial.read();
@@ -224,5 +263,28 @@ void ZaprDann(){
         mySerial.print(data);mySerial.println(" is not a command!");
       break;
     }
+  }
+}
+// ***************************************************
+void CheckMaxMin(float t, float p, float h){
+  if (teMin > t){
+    teMin = t;
+  }
+  else if (teMax < t){
+    teMax = t;
+  }
+
+  if (prMin > p){
+    prMin = p;
+  }
+  else if (prMax < p){
+    prMax = p;
+  }
+
+  if (huMin > h){
+    huMin = h;
+  }
+  else if (huMax < h){
+    huMax = h;
   }
 }
