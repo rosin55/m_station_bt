@@ -156,14 +156,12 @@ void loop() {
     {
       resetMaxMin(te, pr, hu);
     }
-    if ((btnModeSelect.isSingle()) && (lcdRezhim == 1)) {
-      lcdRezhim = 2;
-    }
-    else if ((btnModeSelect.isSingle()) && (lcdRezhim == 2)) {
-      lcdRezhim = 3;
-    }
-    else if ((btnModeSelect.isSingle()) && (lcdRezhim == 3)) {
-     lcdRezhim = 1;
+    if (btnModeSelect.isSingle()) {
+      lcdRezhim += 1;
+      if (lcdRezhim > 3)
+      {
+        lcdRezhim = 1;
+      }
     }
     OtobrLCD(te, pr, hu);
     ZaprDann();
