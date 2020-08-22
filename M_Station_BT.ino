@@ -6,7 +6,7 @@
 
 Автор - Андрей Сахно
 Создан -  15.04.2018
-Изменен - 18.08.2020
+Изменен - 22.08.2020
 ***************************************************************************/
 
 #include <Wire.h>
@@ -31,7 +31,7 @@
 
 #include <SoftwareSerial.h>
 
-#define VERSION "20.08.18"
+#define VERSION "20.08.22"
 #define VERSION2 "(1.0.1)"
 
 // расширенное считывание нажатий кнопок от Alex Gyver (Алекса Гайвера)
@@ -146,6 +146,15 @@ void loop() {
   btnReset.tick();
   btnModeSelect.tick();
 
+  if (btnModeSelect.isSingle()) {
+    lcdRezhim += 1;
+    if (lcdRezhim > 3)
+    {
+      lcdRezhim = 1;
+    }
+    OtobrLCD(te, pr, hu);
+  }
+
   if (millis() - timer > 2000) {
     timer = millis();
     Izmerenie();
@@ -155,14 +164,6 @@ void loop() {
     if (btnReset.isSingle())
     {
       resetMaxMin(te, pr, hu);
-    }
-    if (btnModeSelect.isSingle()) {
-      lcdRezhim += 1;
-      if (lcdRezhim > 3)
-      {
-        lcdRezhim = 1;
-      }
-      OtobrLCD(te, pr, hu);
     }
     OtobrLCD(te, pr, hu);
     ZaprDann();
