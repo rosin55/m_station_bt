@@ -33,6 +33,16 @@
 
 #define VERSION "20.08.18"
 
+// расширенное считывание нажатий кнопок от Alex Gyver (Алекса Гайвера)
+#include <GyverButton.h> // библиотека работы с кнопками
+// кнопка подключена сюда (BTN_PIN --- КНОПКА --- GND)
+#define RESET_BTN_PIN 11
+#define MODE_SELECT_BTN_PIN 10
+
+GButton btnReset(RESET_BTN_PIN);
+GButton btnModeSelect(MODE_SELECT_BTN_PIN);
+
+
 // инициализация с указанием контактов подключения
 LiquidCrystal lcd(9, 8, 7, 6, 5, 4);
 byte Gradus[8] = {
@@ -132,13 +142,35 @@ void setup() {
 
 //############################################################################
 void loop() {
+
+  btnReset.tick();
+  btnModeSelect.tick();
+
   if (millis() - timer > 2000) {
     timer = millis();
     Izmerenie();
     CheckMaxMin(te, pr, hu);
-//    OtobrMonitor (te, pr, hu);
+//  OtobrMonitor (te, pr, hu);
     VremyaToStroka();
-    OtobrLCD (te, pr, hu);
+    if (btnReset.isSingle())
+    {
+      teMin = te;
+      teMax = te;
+      prMin = pr;
+      prMax = pr;
+      huMin = hu;
+      huMax = hu;
+    }
+    if ((btnModeSelect.isSingle()) && (lcdRezhim == 1)) {
+      lcdRezhim = 2;
+    }
+    else if ((btnModeSelect.isSingle()) && (lcdRezhim == 2)) {
+      lcdRezhim = 3;
+    }
+    else if ((btnModeSelect.isSingle()) && (lcdRezhim == 3)) {
+     lcdRezhim = 1;
+    }
+    OtobrLCD(te, pr, hu);
     ZaprDann();
   }
 }
