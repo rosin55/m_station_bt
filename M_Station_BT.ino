@@ -32,6 +32,7 @@
 #include <SoftwareSerial.h>
 
 #define VERSION "20.08.18"
+#define VERSION2 "(1.0.1)"
 
 // расширенное считывание нажатий кнопок от Alex Gyver (Алекса Гайвера)
 #include <GyverButton.h> // библиотека работы с кнопками
@@ -110,8 +111,12 @@ void setup() {
   delay(100);
   lcd.clear();     // очистка дисплея
   lcd.print("Start v");
+  lcd.setCursor(0, 1);
   lcd.print(VERSION);
+  lcd.print(" ");
+  lcd.print(VERSION2);
   delay(2000);
+  lcd.clear();
   IzmerBatarei(); // измерить и показать напряжение батареи питания
 
   lcd.clear();     // очистка дисплея
@@ -132,12 +137,7 @@ void setup() {
 
   // Задание начальных минимальных и максимальных значений
   Izmerenie();
-  teMin = te;
-  teMax = te;
-  prMin = pr;
-  prMax = pr;
-  huMin = hu;
-  huMax = hu;
+  resetMaxMin(te, pr, hu);
 }
 
 //############################################################################
@@ -154,12 +154,7 @@ void loop() {
     VremyaToStroka();
     if (btnReset.isSingle())
     {
-      teMin = te;
-      teMax = te;
-      prMin = pr;
-      prMax = pr;
-      huMin = hu;
-      huMax = hu;
+      resetMaxMin(te, pr, hu);
     }
     if ((btnModeSelect.isSingle()) && (lcdRezhim == 1)) {
       lcdRezhim = 2;
@@ -248,7 +243,7 @@ void VremyaToStroka(){   // перевод времени в строку сим
   int time = millis()/1000;
   sekund = time%60;
   chasov = time/3600;
-  minut =  time/60 - chasov*60;
+  minut = time/60 - chasov*60;
   if (chasov < 10) {stroka = '0';}
   stroka = stroka + chasov + ':';
   if (minut < 10) {stroka += '0';}
@@ -261,7 +256,7 @@ void IzmerBatarei(){
   sensorValue = analogRead(analogInPin);
   outputValue = sensorValue * k ;
   Serial.print(sensorValue); Serial.println(outputValue);
-  lcd.setCursor(0,1);
+  lcd.setCursor(0,0);
   lcd.print("U bat = "); lcd.print(outputValue);
   delay(3000);
 }
@@ -308,7 +303,7 @@ void ZaprDann(){
   }
 }
 // ***************************************************
-void CheckMaxMin(float t, float p, float h){
+void CheckMaxMin(float t, float p, float h) {
   if (teMin > t){
     teMin = t;
   }
@@ -329,4 +324,13 @@ void CheckMaxMin(float t, float p, float h){
   else if (huMax < h){
     huMax = h;
   }
+}
+// ***************************************************
+void resetMaxMin(float t, float p, float h) {
+  teMin = t;
+  teMax = t;
+  prMin = p;
+  prMax = p;
+  huMin = h;
+  huMax = h;
 }
