@@ -82,7 +82,7 @@ void setup() {
   lcd.createChar(0, Gradus);
   delay(100);
   lcd.clear();     // очистка дисплея
-  lcd.print("Start v19.07.10");
+  lcd.print("Start v19.07.10 (1.0.0)");
   delay(2000);
   IzmerBatarei(); // измерить и показать напряжение батареи питания
 
