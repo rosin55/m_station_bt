@@ -162,6 +162,7 @@ void loop() {
       {
         lcdRezhim = 1;
       }
+      OtobrLCD(te, pr, hu);
     }
     OtobrLCD(te, pr, hu);
     ZaprDann();
