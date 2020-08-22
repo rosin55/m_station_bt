@@ -155,16 +155,17 @@ void loop() {
     OtobrLCD(te, pr, hu);
   }
 
+  if (btnReset.isSingle())
+  {
+    resetMaxMin(te, pr, hu);
+  }
+
   if (millis() - timer > 2000) {
     timer = millis();
     Izmerenie();
     CheckMaxMin(te, pr, hu);
 //  OtobrMonitor (te, pr, hu);
     VremyaToStroka();
-    if (btnReset.isSingle())
-    {
-      resetMaxMin(te, pr, hu);
-    }
     OtobrLCD(te, pr, hu);
     ZaprDann();
   }
@@ -333,4 +334,6 @@ void resetMaxMin(float t, float p, float h) {
   prMax = p;
   huMin = h;
   huMax = h;
+
+  OtobrLCD(t, p, h);
 }
