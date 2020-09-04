@@ -77,6 +77,8 @@ int lcdRezhim = 1; // режим отображения
 int minut =0;
 int sekund =0;
 int chasov =0;
+int twenty_four_hour =0;
+
 String stroka = ""; // строка для отображения времени
 long int timer = 0; // текущее время
 
@@ -208,7 +210,7 @@ void OtobrLCD (float t, float p, float h) {
     lcd.setCursor(0,0);
     lcd.print("P:");lcd.print(p,0); lcd.print("mm");
     // print the number of seconds since reset:
-    lcd.setCursor(8,1);
+    lcd.setCursor(16-(stroka.length()),1);
     lcd.println (stroka);  // отображение времени с момента запуска прибора
     // lcd.print(millis() / 1000);
   }
@@ -245,6 +247,11 @@ void VremyaToStroka(){   // перевод времени в строку сим
   sekund = time%60;
   chasov = time/3600;
   minut = time/60 - chasov*60;
+  if (chasov > 23) {
+    twenty_four_hour = ++twenty_four_hour;
+    chasov = 0;
+    stroka = twenty_four_hour +'d';
+  }
   if (chasov < 10) {stroka = '0';}
   stroka = stroka + chasov + ':';
   if (minut < 10) {stroka += '0';}
