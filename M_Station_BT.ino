@@ -6,7 +6,7 @@
 
 Автор - Андрей Сахно
 Создан -  15.04.2018
-Изменен - 22.08.2020
+Изменен - 04.09.2020
 ***************************************************************************/
 
 #include <Wire.h>
@@ -31,7 +31,7 @@
 
 #include <SoftwareSerial.h>
 
-#define VERSION "20.08.22"
+#define VERSION "20.09.04"
 #define VERSION2 "(1.0.1)"
 
 // расширенное считывание нажатий кнопок от Alex Gyver (Алекса Гайвера)
@@ -241,7 +241,7 @@ void OtobrLCD (float t, float p, float h) {
 }
 // ***************************************************
 void VremyaToStroka(){   // перевод времени в строку символов
-  int time = millis()/1000;
+  unsigned int time = millis()/1000;
   sekund = time%60;
   chasov = time/3600;
   minut = time/60 - chasov*60;
