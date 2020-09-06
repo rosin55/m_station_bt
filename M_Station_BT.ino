@@ -243,7 +243,7 @@ void OtobrLCD (float t, float p, float h) {
 }
 // ***************************************************
 void VremyaToStroka(){   // перевод времени в строку символов
-  unsigned int time = millis()/1000;
+  long int time = millis()/1000;
   sekund = time%60;
   chasov = time/3600;
   minut = time/60 - chasov*60;
