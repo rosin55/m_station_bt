@@ -172,6 +172,7 @@ void loop() {
     disp_timer = millis();
     Izmerenie();
     CheckMaxMin(te, pr, hu);
+    OtobrLCD(te, pr, hu);
   }
 
 }
@@ -213,9 +214,6 @@ void OtobrLCD (float t, float p, float h) {
     lcd.setCursor(0,0);
     lcd.print("P:");lcd.print(p,0); lcd.print("mm");
     // print the number of seconds since reset:
-//    lcd.setCursor(16-(stroka.length()),1);
-//    lcd.println (stroka);  // отображение времени с момента запуска прибора
-    // lcd.print(millis() / 1000);
   }
   else if (lcdRezhim == 2){
     lcd.clear();
@@ -244,26 +242,7 @@ void OtobrLCD (float t, float p, float h) {
     lcd.println("Maximum ");
   }
 }
-// ***************************************************
-/*
-void VremyaToStroka(){   // перевод времени в строку символов
-  long int time = millis()/1000;
-  sekund = time%60;
-  chasov = time/3600;
-  minut = time/60 - chasov*60;
-  if (chasov > 23) {
-    twenty_four_hour = ++twenty_four_hour;
-    chasov = 0;
-    stroka = twenty_four_hour +'d';
-  }
-  if (chasov < 10) {stroka = '0';}
-  stroka = stroka + chasov + ':';
-  if (minut < 10) {stroka += '0';}
-  stroka = stroka + minut + ':';
-  if (sekund < 10) {stroka +='0';}
-  stroka = stroka + sekund;
-}
-*/
+
 // ***************************************************
 void IzmerBatarei(){
   sensorValue = analogRead(analogInPin);
