@@ -6,7 +6,7 @@
 
 Автор - Андрей Сахно
 Создан -  15.04.2018
-Изменен - 04.09.2020
+Изменен - 17.09.2020
 ***************************************************************************/
 
 #include <Wire.h>
@@ -31,8 +31,8 @@
 
 #include <SoftwareSerial.h>
 
-#define VERSION "20.09.04"
-#define VERSION2 "(1.0.1)"
+#define VERSION "20.09.17"
+#define VERSION2 "(1.0.2)"
 
 // расширенное считывание нажатий кнопок от Alex Gyver (Алекса Гайвера)
 #include <GyverButton.h> // библиотека работы с кнопками
@@ -77,10 +77,11 @@ int lcdRezhim = 1; // режим отображения
 int minut =0;
 int sekund =0;
 int chasov =0;
-int twenty_four_hour =0;
+int dney =0;
 
 String stroka = ""; // строка для отображения времени
-long int timer = 0; // текущее время
+long int timer = 0; // таймер отображения времни
+long int disp_timer = 0; // таймер отображения параметров
 
 const int analogInPin = A0; // номер аналогового входа для измерения напряжения батареи
 int sensorValue = 0;        // величина напряжения после делителя
@@ -162,15 +163,17 @@ void loop() {
     resetMaxMin(te, pr, hu);
   }
 
-  if (millis() - timer > 2000) {
+  if (millis() - timer > 1000) {  // инкремент времени раз в секунду
     timer = millis();
+    CountTime();
+    if (lcdRezhim == 1)  { PrintTime(); } // время только в основном режиме
+  }
+  if (millis() - disp_timer > 30000) {    // вывод параметров раз в 30-ть сек
+    disp_timer = millis();
     Izmerenie();
     CheckMaxMin(te, pr, hu);
-//  OtobrMonitor (te, pr, hu);
-    VremyaToStroka();
-    OtobrLCD(te, pr, hu);
-    ZaprDann();
   }
+
 }
 
 //############################################################################
@@ -210,8 +213,8 @@ void OtobrLCD (float t, float p, float h) {
     lcd.setCursor(0,0);
     lcd.print("P:");lcd.print(p,0); lcd.print("mm");
     // print the number of seconds since reset:
-    lcd.setCursor(16-(stroka.length()),1);
-    lcd.println (stroka);  // отображение времени с момента запуска прибора
+//    lcd.setCursor(16-(stroka.length()),1);
+//    lcd.println (stroka);  // отображение времени с момента запуска прибора
     // lcd.print(millis() / 1000);
   }
   else if (lcdRezhim == 2){
@@ -242,6 +245,7 @@ void OtobrLCD (float t, float p, float h) {
   }
 }
 // ***************************************************
+/*
 void VremyaToStroka(){   // перевод времени в строку символов
   long int time = millis()/1000;
   sekund = time%60;
@@ -259,6 +263,7 @@ void VremyaToStroka(){   // перевод времени в строку сим
   if (sekund < 10) {stroka +='0';}
   stroka = stroka + sekund;
 }
+*/
 // ***************************************************
 void IzmerBatarei(){
   sensorValue = analogRead(analogInPin);
@@ -343,4 +348,39 @@ void resetMaxMin(float t, float p, float h) {
   huMax = h;
 
   OtobrLCD(t, p, h);
+}
+
+void CountTime( ){  // вызывается кажудую секунду,
+  //                   считает время и переводит в строку  
+  String ch_dney = "";
+  String ch_chasov = "";
+  String ch_minut = "";
+  String ch_sekund = "";
+  sekund++;
+  //Serial.println(sekund);
+  if (sekund > 59) {
+    sekund = 0;
+    minut++;
+  }
+  if (minut > 59) {
+    minut = 0;
+    chasov++;
+  }
+  if (chasov > 24) {
+    chasov = 0;
+    dney++;
+  }
+  if ( sekund < 10 ) {ch_sekund = '0';} // добавление лидирующего нуля
+  if ( minut < 10 ) {ch_minut = '0';}
+  if ( chasov < 10 ) {ch_chasov = '0';}
+  ch_dney = String(dney, DEC);
+  ch_chasov += String(chasov, DEC);
+  ch_minut += String(minut, DEC);
+  ch_sekund += String(sekund, DEC);
+  stroka = ch_dney + 'd' + ch_chasov + ':' + ch_minut + ':' + ch_sekund;
+}
+
+void PrintTime() {
+    lcd.setCursor(16-(stroka.length()),1);
+    lcd.println (stroka);  // отображение времени с момента запуска прибора
 }
