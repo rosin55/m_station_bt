@@ -31,8 +31,8 @@
 
 #include <SoftwareSerial.h>
 
-#define VERSION "20.09.17"
-#define VERSION2 "(1.0.2)"
+#define VERSION "25.09.20"
+#define VERSION2 "(1.0.3)"
 
 // расширенное считывание нажатий кнопок от Alex Gyver (Алекса Гайвера)
 #include <GyverButton.h> // библиотека работы с кнопками
@@ -118,7 +118,7 @@ void setup() {
   lcd.print(VERSION);
   lcd.print(" ");
   lcd.print(VERSION2);
-  delay(2000);
+  delay(4000);
   lcd.clear();
   IzmerBatarei(); // измерить и показать напряжение батареи питания
 
@@ -345,7 +345,7 @@ void CountTime( ){  // вызывается кажудую секунду,
     minut = 0;
     chasov++;
   }
-  if (chasov > 24) {
+  if (chasov > 23) {
     chasov = 0;
     dney++;
   }
