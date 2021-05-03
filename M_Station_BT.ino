@@ -13,6 +13,7 @@
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP280.h>
+#include <API.ino>
 #define BMP280_ADDRESS (0x76) // явное задание адреса датчика для I2C
 // датчик BMP 280 подключен к встроенному I2c интерфейсу:
 // SCL - A5
@@ -74,10 +75,10 @@ float teMax;
 int lcdRezhim = 1; // режим отображения
 
 // время с момента старта программы
-int minut =0;
-int sekund =0;
-int chasov =0;
-int dney =0;
+int minut = 0;
+int sekund = 0;
+int chasov = 0;
+int dney = 0;
 
 String stroka = ""; // строка для отображения времени
 long int timer = 0; // таймер отображения времни
@@ -86,7 +87,7 @@ long int disp_timer = 0; // таймер отображения параметр
 const int analogInPin = A0; // номер аналогового входа для измерения напряжения батареи
 int sensorValue = 0;        // величина напряжения после делителя
 float outputValue = 0;      // значение напряжения питания для вывода на экран
-float k ;                   // коэффициент делителя напряжения
+float k;                    // коэффициент делителя напряжения
 
 Adafruit_BMP280 bmp; // I2C
 //Adafruit_BMP280 bmp(BMP_CS); // hardware SPI
@@ -95,21 +96,21 @@ DHT dht(DHTPIN, DHTTYPE);
 
 //############################################################################
 void setup() {
-  Serial.begin(9600);
   // устанавливаем скорость передачи данных для последовательного порта, созданного
   // библиотекой SoftwareSerial
-   mySerial.begin(9600);
-   mySerial.println("Hi! This is M_Station_BT!");
+  mySerial.begin(9600);
+  Serial.begin(9600);
+  mySerial.println("Hi! This is M_Station_BT!");
+  // Serial.println("Hi! This is M_Station_BT!");
 
   analogReference(INTERNAL); // внутренний опорный источник
   k = 8.1 / 682;
 
   dht.begin();
-  Serial.println("Hi! This is M_Station_BT!");
   delay(1000);
   lcd.begin(16,2); // режим работы
   delay(100);
- // создание знака "градус"
+  //создание знака "градус"
   lcd.createChar(0, Gradus);
   delay(100);
   lcd.clear();     // очистка дисплея
@@ -126,20 +127,20 @@ void setup() {
   lcd.setCursor(2,0);
   // опрос датчика давления и температуры
   if (!bmp.begin(BMP280_ADDRESS)) {
-    Serial.println("Ошибка получения данных с датчика BMP280");
+    // Serial.println("Ошибка получения данных с датчика BMP280");
     lcd.print("Error BMP280");
     while (1);
   }
   // опрос датчика влажности
   float h = dht.readHumidity();
   if (isnan(h)) {// ошибка получения данных
-    Serial.println("Ошибка получения данных с датчика DHT11");
+    // Serial.println("Ошибка получения данных с датчика DHT11");
     lcd.print("Error DHT11");
     while (1);
   }
 
-  // Задание начальных минимальных и максимальных значений
   Izmerenie();
+  // Задание начальных минимальных и максимальных значений
   resetMaxMin(te, pr, hu);
 }
 
@@ -173,36 +174,36 @@ void loop() {
     Izmerenie();
     CheckMaxMin(te, pr, hu);
     OtobrLCD(te, pr, hu);
+    API.sendInfo(te, pr, hu);
   }
-
 }
 
 //############################################################################
 // **************************************************
-void Izmerenie () {
+void Izmerenie() {
   te = bmp.readTemperature();
   pr = bmp.readPressure() * 0.0075; // перевод в мм.рт.ст.
   hu = dht.readHumidity();
 }
 // ***************************************************
 void OtobrMonitor (float t, float p, float h) {
-    Serial.print("Температура: ");
-    Serial.print(t);
-    Serial.println(" *C");
+    //Serial.print("Температура: ");
+    //Serial.print(t);
+    //Serial.println(" *C");
 
-    Serial.print("Давление = ");
-    Serial.print(p);
-    Serial.println(" mm Hg");
+    //Serial.print("Давление = ");
+    //Serial.print(p);
+    //Serial.println(" mm Hg");
 
-    Serial.print("Влажность = ");
-    Serial.print(h);
-    Serial.println(" %");
-    Serial.println (stroka);
+    //Serial.print("Влажность = ");
+    //Serial.print(h);
+    //Serial.println(" %");
+    //Serial.println (stroka);
 
-    Serial.println();
+    //Serial.println();
 }
 // ***************************************************
-void OtobrLCD (float t, float p, float h) {
+void OtobrLCD(float t, float p, float h) {
   if (lcdRezhim == 1){
     lcd.clear();
     lcd.setCursor(0,1);
@@ -247,7 +248,7 @@ void OtobrLCD (float t, float p, float h) {
 void IzmerBatarei(){
   sensorValue = analogRead(analogInPin);
   outputValue = sensorValue * k ;
-  Serial.print(sensorValue); Serial.println(outputValue);
+  //Serial.print(sensorValue); Serial.println(outputValue);
   lcd.setCursor(0,0);
   lcd.print("U bat = "); lcd.print(outputValue);
   delay(3000);
@@ -329,7 +330,7 @@ void resetMaxMin(float t, float p, float h) {
   OtobrLCD(t, p, h);
 }
 
-void CountTime( ){  // вызывается кажудую секунду,
+void CountTime(){  // вызывается кажудую секунду,
   //                   считает время и переводит в строку  
   String ch_dney = "";
   String ch_chasov = "";
